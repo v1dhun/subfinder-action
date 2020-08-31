@@ -1,0 +1,35 @@
+name: "Subdomain finding using subfinder"
+author: "v1dhun"
+description: "Subfinder is a subdomain discovery tool developed by ProjectDiscovery.io."
+branding:
+  icon: "alert-circle"
+  color: "blue"
+
+inputs:
+  domains-list:
+    description: "List of domains to run subfinder"
+    required: true
+  telegram-chat-id:
+    description: "Telegram chat id to send notifications"
+    required: false
+  telegram-token:
+    description: "Telegram bot token to send notifications"
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - run: GO111MODULE=on go get -u -v github.com/projectdiscovery/subfinder/cmd/subfinder github.com/projectdiscovery/httpx/cmd/httpx
+      shell: bash
+    - run: $HOME/go/bin/subfinder -t 50 -dL ${{ inputs.domains-list }} --silent -nW -o hosts.txt
+      shell: bash
+    - run: $HOME/go/bin/httpx -l hosts.txt -silent -timeout 5 -threads 50 -retries 2 -o alive.txt
+      shell: bash
+    - run: |
+       if [[ ${{ inputs.telegram-chat-id }} && ${{ inputs.telegram-token }} ]]
+       then
+          curl -o send.sh "https://gist.githubusercontent.com/v1dhun/afc70dd11f93d0c6393fa3c5573ee669/raw/127bae54feb0a707b4598ad9755358e5c6abdee7/send.sh"
+          bash send.sh ${{ inputs.telegram-chat-id }} ${{ inputs.telegram-token }} "hosts.txt" "Subfinder result"
+          bash send.sh ${{ inputs.telegram-chat-id }} ${{ inputs.telegram-token }} "alive.txt" "Alive domains result"
+       fi
+      shell: bash
