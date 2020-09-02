@@ -15,6 +15,10 @@ inputs:
   telegram-token:
     description: "Telegram bot token to send notifications"
     required: false
+  check-alive:
+    description: "To check host is alive or not using httpx"
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
@@ -23,13 +27,20 @@ runs:
       shell: bash
     - run: $HOME/go/bin/subfinder -t 50 -dL ${{ inputs.domains-list }} --silent -nW -o hosts.txt
       shell: bash
-    - run: $HOME/go/bin/httpx -l hosts.txt -silent -timeout 5 -threads 50 -retries 2 -o alive.txt
+    - run: |
+       if [ ${{ inputs.check-alive }} == "true" ]
+       then
+          $HOME/go/bin/httpx -l hosts.txt -silent -timeout 5 -threads 50 -retries 2 -o alive.txt
+       fi
       shell: bash
     - run: |
        if [[ ${{ inputs.telegram-chat-id }} && ${{ inputs.telegram-token }} ]]
        then
-          curl -o send.sh "https://gist.githubusercontent.com/v1dhun/afc70dd11f93d0c6393fa3c5573ee669/raw/127bae54feb0a707b4598ad9755358e5c6abdee7/send.sh"
+          curl -s -o send.sh "https://gist.githubusercontent.com/v1dhun/afc70dd11f93d0c6393fa3c5573ee669/raw/127bae54feb0a707b4598ad9755358e5c6abdee7/send.sh"
           bash send.sh ${{ inputs.telegram-chat-id }} ${{ inputs.telegram-token }} "hosts.txt" "Subfinder result"
-          bash send.sh ${{ inputs.telegram-chat-id }} ${{ inputs.telegram-token }} "alive.txt" "Alive domains result"
+          if [ ${{ inputs.check-alive }} == "true" ]
+          then
+            bash send.sh ${{ inputs.telegram-chat-id }} ${{ inputs.telegram-token }} "alive.txt" "Alive domains result"
+          fi
        fi
       shell: bash
