@@ -18,6 +18,7 @@ jobs:
       - uses: v1dhun/subfinder-action@master
         with:
           domains-list: "domains.txt"
+          check-alive: "true"
           telegram-chat-id: ${{ secrets.TELEGRAM_CHAT_ID }}
           telegram-token: ${{ secrets.TELEGRAM_TOKEN }}
 ```
@@ -27,6 +28,7 @@ jobs:
 | Input  | Description | Usage |
 | :---:     |     :---:   |    :---:   |
 | domains-list  | List of domains to run subfinder  | Required
+| check-alive  | To check host is alive or not using httpx | Optional
 | telegram-chat-id  | Telegram chat id to send notifications  | Optional
 | telegram-token  | Telegram bot token to send notifications | Optional
 
