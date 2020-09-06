@@ -34,13 +34,16 @@ runs:
        fi
       shell: bash
     - run: |
-       if [[ ${{ inputs.telegram-chat-id }} && ${{ inputs.telegram-token }} ]]
+       if [ ! -z ${{ inputs.telegram-chat-id }} ]
        then
-          curl -s -o send.sh "https://gist.githubusercontent.com/v1dhun/afc70dd11f93d0c6393fa3c5573ee669/raw/127bae54feb0a707b4598ad9755358e5c6abdee7/send.sh"
-          bash send.sh ${{ inputs.telegram-chat-id }} ${{ inputs.telegram-token }} "hosts.txt" "Subfinder result"
-          if [ ${{ inputs.check-alive }} == "true" ]
+          if [ ! -z ${{ inputs.telegram-token }} ]
           then
-            bash send.sh ${{ inputs.telegram-chat-id }} ${{ inputs.telegram-token }} "alive.txt" "Alive domains result"
+            curl -s -o send.sh "https://gist.githubusercontent.com/v1dhun/afc70dd11f93d0c6393fa3c5573ee669/raw/127bae54feb0a707b4598ad9755358e5c6abdee7/send.sh"
+            bash send.sh ${{ inputs.telegram-chat-id }} ${{ inputs.telegram-token }} "hosts.txt" "Subfinder result"
+            if [ ${{ inputs.check-alive }} == "true" ]
+            then
+              bash send.sh ${{ inputs.telegram-chat-id }} ${{ inputs.telegram-token }} "alive.txt" "Alive domains result"
+            fi
           fi
        fi
       shell: bash
