@@ -1,5 +1,5 @@
 
-[Subfinder](https://github.com/projectdiscovery/subfinder) is a subdomain discovery tool developed by [ProjectDiscovery.io](https://twitter.com/pdiscoveryio). Its discovers valid subdomains for websites.
+[Subfinder](https://github.com/projectdiscovery/subfinder) is a subdomain discovery tool developed by [ProjectDiscovery.io](https://twitter.com/pdiscoveryio). It helps to discover valid subdomains from targets given.
 
 ## Usage
 ```
