@@ -19,13 +19,18 @@ inputs:
     description: "To check host is alive or not using httpx"
     required: false
     default: "false"
+  config-list:
+    description: "Configuration file for API Keys, etc"
+    required: false
+    default: "config.yaml"
+
 
 runs:
   using: "composite"
   steps:
     - run: GO111MODULE=on go get -u -v github.com/projectdiscovery/subfinder/cmd/subfinder github.com/projectdiscovery/httpx/cmd/httpx
       shell: bash
-    - run: $HOME/go/bin/subfinder -t 50 -dL ${{ inputs.domains-list }} --silent -nW -o hosts.txt
+    - run: $HOME/go/bin/subfinder -config ${{ inputs.config-list }} -t 50 -dL ${{ inputs.domains-list }} --silent -nW -o hosts.txt
       shell: bash
     - run: |
        if [ ${{ inputs.check-alive }} == "true" ]

@@ -18,6 +18,7 @@ jobs:
       - uses: v1dhun/subfinder-action@master
         with:
           domains-list: "domains.txt"
+          config-list: "config.yaml"
           check-alive: "true"
           telegram-chat-id: ${{ secrets.TELEGRAM_CHAT_ID }}
           telegram-token: ${{ secrets.TELEGRAM_TOKEN }}
@@ -31,6 +32,7 @@ jobs:
 | check-alive  | To check host is alive or not using [httpx](https://github.com/projectdiscovery/httpx) | Optional
 | telegram-chat-id  | Telegram chat id to send notifications  | Optional
 | telegram-token  | Telegram bot token to send notifications | Optional
+| config-list | Configuration file for API Keys, etc | Optional
 
 ## Contributing
 
