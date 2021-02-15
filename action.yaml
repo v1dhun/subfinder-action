@@ -29,16 +29,18 @@ runs:
   using: "composite"
   steps:
     - run: | 
-       GO111MODULE=on go get -u -v  github.com/projectdiscovery/httpx/cmd/httpx
+       curl -o httpx_1.0.3_linux_amd64.tar.gz -L -s https://github.com/projectdiscovery/httpx/releases/download/v1.0.3/httpx_1.0.3_linux_amd64.tar.gz
        curl -o subfinder_2.4.5_linux_amd64.tar.gz -L -s https://github.com/projectdiscovery/subfinder/releases/download/v2.4.5/subfinder_2.4.5_linux_amd64.tar.gz
        tar -xf subfinder_2.4.5_linux_amd64.tar.gz
+       tar -xf httpx_1.0.3_linux_amd64.tar.gz
+       rm *amd64.tar.gz
       shell: bash
     - run: ./subfinder -config ${{ inputs.config-list }} -t 50 -dL ${{ inputs.domains-list }} --silent -nW -o hosts.txt
       shell: bash
     - run: |
        if [ ${{ inputs.check-alive }} == "true" ]
        then
-          $HOME/go/bin/httpx -l hosts.txt -silent -timeout 5 -threads 50 -retries 2 -o alive.txt
+          ./httpx -l hosts.txt -silent -timeout 2 -threads 50 -retries 2 -o alive.txt
        fi
       shell: bash
     - run: |
